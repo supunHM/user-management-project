@@ -450,38 +450,17 @@ class example{
     //---------------------------DELETE-------------------------------
     public static void delete(int index){
 		Customer[] tempContactArray = new Customer[contactArray.length-1];
-        // String[] tempIdArray=new String[idArray.length-1];
-        // String[] tempNameArray=new String[nameArray.length-1];
-        // String[] tempPhoneNumberArray=new String[phoneNumberArray.length-1];
-        // String[] tempCompanyNameArray=new String[companyNameArray.length-1];
-        // double[] tempSalaryArray=new double[salaryArray.length-1];
-        // String[] tempBirthdayArray=new String[birthdayArray.length-1];
+       
 
         for(int i=index; i<contactArray.length-1; i++) {
 			contactArray[i] = contactArray[i+1];
-            // idArray[i]=idArray[i+1];
-            // nameArray[i]=nameArray[i+1];
-            // phoneNumberArray[i]=phoneNumberArray[i+1];
-            // companyNameArray[i]=companyNameArray[i+1];
-            // salaryArray[i]=salaryArray[i+1];
-            // birthdayArray[i]=birthdayArray[i+1];
+          
         }
         for(int i=0; i<contactArray.length-1; i++) {
 			tempContactArray[i] = contactArray[i];
-            // tempIdArray[i]=idArray[i];
-            // tempNameArray[i]=nameArray[i];
-            // tempPhoneNumberArray[i]=phoneNumberArray[i];
-            // tempCompanyNameArray[i]=companyNameArray[i];
-            // tempSalaryArray[i]=salaryArray[i];
-            // tempBirthdayArray[i]=birthdayArray[i];
         }
 		contactArray = tempContactArray;
-        // idArray=tempIdArray;
-        // nameArray=tempNameArray;
-        // phoneNumberArray=tempPhoneNumberArray;
-        // companyNameArray=tempCompanyNameArray;
-        // salaryArray=tempSalaryArray;
-        // birthdayArray=tempBirthdayArray;
+      
  
     }
     //--------------------------DELETE CONTACTS-----------------------
