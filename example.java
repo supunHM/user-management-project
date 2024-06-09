@@ -2,6 +2,93 @@
 import java.time.*;
 import java.util.*;
 
+class CustomerList{
+    private Customer[] customerArray;
+    private int nextIndex;
+    private int size;
+    private int loadFactor;
+
+    CustomerList(int size, int loadFactor) {
+        customerArray = new Customer[size];
+        nextIndex = 0;
+        this.size = size;
+        this.loadFactor = loadFactor;
+    }
+    private boolean isFull(){
+        return nextIndex >= size;
+    }
+
+    //-----------Extend Array Method--------------
+    private void extendArrays(){
+        Customer[] tempCustomerArray = new Customer[size+loadFactor]; 
+
+        for(int i=0; i<nextIndex; i++){
+            tempCustomerArray[i] = customerArray[i];
+        }
+        customerArray=tempCustomerArray;
+    }
+
+    //-------------Add Method--------------
+    public void add(Customer customer){
+        if(isFull()){
+            extendArrays();
+        }
+        customerArray[nextIndex++] = customer;
+    }
+
+     //---------------------------SEARCH METHOD--------------------------
+     public int searchByNameOrPhoneNumber(String nameOrPhone){
+        for(int i=0; i<nextIndex; i++){
+            if(customerArray[i].getName().equals(nameOrPhone) || customerArray[i].getPhoneNumber().equals(nameOrPhone)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //--------------Temp Array------------------
+    public Customer[] tempArray(){
+        Customer[] tempCustomerArray = new Customer[size];
+        for(int i=0; i<nextIndex; i++){
+            tempCustomerArray[i] = customerArray[i];
+        }
+        customerArray=tempCustomerArray;
+        return tempCustomerArray;
+    }
+
+    public int getSize(){
+        return nextIndex;
+    }
+
+    //---------------Update Name-----------------
+    public void updateName(int index , String newName){
+        customerArray[index].setName(newName);
+    }
+    //---------------Update Phone Number-----------------
+    public void updatePhoneNumber(int index , String newPhoneNumber){
+        customerArray[index].setPhoneNumber(newPhoneNumber);
+    }
+    //---------------Update Name-----------------
+    public void updateCompanyName(int index , String newCompanyName){
+        customerArray[index].setCompanyName(newCompanyName);
+    }
+    //---------------Update Name-----------------
+    public void updateSalary(int index , double newSalary){
+        customerArray[index].setSalary(newSalary);
+    }
+
+    public void delete(int index){
+        for(int i = index; i <nextIndex-1; i++){
+            customerArray[i] = customerArray[i+1];
+        }
+        nextIndex--;
+        customerArray[nextIndex] = null;
+    }
+
+    
+
+
+}
 class Customer{
 	private String id;
 	private String name;
@@ -68,14 +155,9 @@ class Customer{
 }
 class example{
     //-------------------CREATE AN ARRAYS ----------------
-    // public static String[] idArray = new String[0];
-    // public static String[] nameArray=new String[0];
-    // public static String[] phoneNumberArray=new String[0];
-    // public static String[] companyNameArray=new String[0];
-    // public static double[] salaryArray=new double[0];
-    // public static String[] birthdayArray=new String[0];
 
-	public static Customer [] contactArray = new Customer[0];
+	//public static Customer [] contactArray = new Customer[0];
+    public static CustomerList customerList = new CustomerList(100, 50);
     
 	    //----------------------CLEAR CONSOLE --------------------
 		public final static void clearConsole() { 
@@ -98,11 +180,7 @@ class example{
     }
     //-------------------GENERATE ID----------------
     public static String generateId(){
-		if(contactArray.length==0){
-			return "C0001";
-		}else{
-			return String.format("C%04d",contactArray.length+1);
-		}
+			return String.format("C%04d",customerList.getSize()+1);	
 	}
     //-----------------HOME PAGE--------------------
     public static void homepage(){
@@ -201,17 +279,17 @@ class example{
 					return false;
     }
     //-------------------------EXTEND ARRAYS-----------------------
-    public static void extendArrays(){
-		Customer[] tempContactArray = new Customer[contactArray.length+1];
+    // public static void extendArrays(){
+	// 	Customer[] tempContactArray = new Customer[contactArray.length+1];
 		  
 
 
-        for(int i=0; i<contactArray.length; i++) {
-			tempContactArray[i] = contactArray[i];
-        }
-		contactArray = tempContactArray;
+    //     for(int i=0; i<contactArray.length; i++) {
+	// 		tempContactArray[i] = contactArray[i];
+    //     }
+	// 	contactArray = tempContactArray;
      
-    }
+    // }
     //-----------------ADD CONTACTS--------------------
     public static void addContacts(){
         Scanner input=new Scanner(System.in);
@@ -285,11 +363,13 @@ class example{
 
             }while(!isValidBirthday(birthday));
 
-            extendArrays();
+            //extendArrays();
 
 			Customer customer = new Customer(id, name, phoneNumber, companyName, salary, birthday);
 
-			contactArray[contactArray.length-1]=customer;
+            customerList.add(customer);
+
+			//contactArray[contactArray.length-1]=customer;
 
 
 
@@ -307,23 +387,15 @@ class example{
         }while(true);
 
     }
-    //---------------------------SEARCH METHOD--------------------------
-    public static int searchByNameOrPhoneNumber(String nameOrPhone){
-        for(int i=0; i<contactArray.length; i++){
-            if(contactArray[i].getName().equals(nameOrPhone) || contactArray[i].getPhoneNumber().equals(nameOrPhone)){
-                return i;
-            }
-        }
-        return -1;
-    }
+   
     //--------------------------PRINT DETAILS---------------------------
     public static void printDetails(int index){
-        System.out.println("Contact Id : "+contactArray[index].getId());
-        System.out.println("Name : "+contactArray[index].getName());
-        System.out.println("Phone Number : "+contactArray[index].getPhoneNumber());
-        System.out.println("Company Name : "+contactArray[index].getCompanyName());
-        System.out.println("Salary : "+contactArray[index].getSalary());
-        System.out.println("Birthday : "+contactArray[index].getBirthday());
+        System.out.println("Contact Id : "+customerList.tempArray()[index].getId());
+        System.out.println("Name : "+customerList.tempArray()[index].getName());
+        System.out.println("Phone Number : "+customerList.tempArray()[index].getPhoneNumber());
+        System.out.println("Company Name : "+customerList.tempArray()[index].getCompanyName());
+        System.out.println("Salary : "+customerList.tempArray()[index].getSalary());
+        System.out.println("Birthday : "+customerList.tempArray()[index].getBirthday());
     }
     //--------------------------SEARCH CONTACT-------------------------
     public static void searchContacts(){
@@ -332,7 +404,7 @@ class example{
             System.out.println("=====================SEARCH CONTACTS======================");
             System.out.print("\nSearch contact by name or phone number : ");
             String nameOrPhone=input.next();
-            int index = searchByNameOrPhoneNumber(nameOrPhone);
+            int index = customerList.searchByNameOrPhoneNumber(nameOrPhone);
 
             if(index == -1){
                 System.out.println("\n\tNo contact found for "+nameOrPhone);
@@ -367,34 +439,38 @@ class example{
         System.out.println("===================");
         System.out.print("\nInput new name : ");
         String newName = input.next();
-        contactArray[index].setName(newName);
+        customerList.updateName(index , newName);
+       // contactArray[index].setName(newName);
     }
-    //--------------------------UPDATE NAME----------------------------
+    //--------------------------UPDATE PHONE NUMBER----------------------------
     public static void updatePhoneNumber(int index){
         Scanner input=new Scanner(System.in);
         System.out.println("\n Update Phonenumber");
         System.out.println("========================");
         System.out.print("\nInput new phone number : ");
         String newPhoneNumber = input.next();
-        contactArray[index].setPhoneNumber(newPhoneNumber);
+        customerList.updatePhoneNumber(index , newPhoneNumber);
+        //contactArray[index].setPhoneNumber(newPhoneNumber);
     }
-    //--------------------------UPDATE NAME----------------------------
+    //--------------------------UPDATE COMPANY NAME---------------------------
     public static void updateCompanyName(int index){
         Scanner input=new Scanner(System.in);
         System.out.println("\n Update Company Name");
         System.out.println("===========================");
         System.out.print("\nInput new company name : ");
         String newCompanyName = input.next();
-        contactArray[index].setCompanyName(newCompanyName);
+        customerList.updateCompanyName(index , newCompanyName);
+        //contactArray[index].setCompanyName(newCompanyName);
     }
-    //--------------------------UPDATE NAME----------------------------
+    //--------------------------UPDATE SALARY----------------------------
     public static void updateSalary(int index){
         Scanner input=new Scanner(System.in);
         System.out.println("\n Update Salary");
         System.out.println("==================");
         System.out.print("\nInput new salary : ");
         double newSalary = input.nextDouble();
-        contactArray[index].setSalary(newSalary);
+        customerList.updateSalary(index , newSalary);
+        //contactArray[index].setSalary(newSalary);
     }
     //--------------------------UPDATE CONTACTS-----------------------
     public static void updateContacts(){
@@ -403,7 +479,7 @@ class example{
             System.out.println("=======================UPDATE CONTACTS================");
             System.out.print("\nSearch contact by name or phone number : ");
             String nameOrPhone=input.next();
-            int index = searchByNameOrPhoneNumber(nameOrPhone);
+            int index = customerList.searchByNameOrPhoneNumber(nameOrPhone);
 
             if(index == -1){
                 System.out.println("\n\tNo contact found for "+nameOrPhone);
@@ -448,21 +524,21 @@ class example{
         }while(true);
     }
     //---------------------------DELETE-------------------------------
-    public static void delete(int index){
-		Customer[] tempContactArray = new Customer[contactArray.length-1];
+    // public static void delete(int index){
+	// 	Customer[] tempContactArray = new Customer[contactArray.length-1];
        
 
-        for(int i=index; i<contactArray.length-1; i++) {
-			contactArray[i] = contactArray[i+1];
+    //     for(int i=index; i<contactArray.length-1; i++) {
+	// 		contactArray[i] = contactArray[i+1];
           
-        }
-        for(int i=0; i<contactArray.length-1; i++) {
-			tempContactArray[i] = contactArray[i];
-        }
-		contactArray = tempContactArray;
+    //     }
+    //     for(int i=0; i<contactArray.length-1; i++) {
+	// 		tempContactArray[i] = contactArray[i];
+    //     }
+	// 	contactArray = tempContactArray;
       
  
-    }
+    // }
     //--------------------------DELETE CONTACTS-----------------------
     public static void deleteContacts(){
         Scanner input = new Scanner(System.in);
@@ -470,7 +546,7 @@ class example{
             System.out.println("======================DELETE CONTACTS================");
             System.out.print("\nSearch contact by name or phone number : ");
             String nameOrPhone=input.next();
-            int index = searchByNameOrPhoneNumber(nameOrPhone);
+            int index = customerList.searchByNameOrPhoneNumber(nameOrPhone);
 
             if(index == -1){
                 System.out.println("\n\tNo contact found for "+nameOrPhone);
@@ -489,7 +565,7 @@ class example{
                     System.out.print("\nDo you want to delete this contact : ");
                     char ch=input.next().charAt(0);
                     if(ch=='Y'||ch=='y'){
-                        delete(index);
+                        customerList.delete(index);
                         System.out.println("\nContact has been deleted successfully...");
                         break L1;
                     }else if(ch=='N'||ch=='n'){
@@ -607,14 +683,14 @@ class example{
     }
     //-------------------------NAME SORT---------------------------
     public static void sortingByName(){
-		Customer[] tempContactArray = new Customer[contactArray.length];
+		Customer[] tempContactArray = new Customer[customerList.getSize()];
 
-        for(int i=0; i<contactArray.length; i++){
-			tempContactArray[i] = contactArray[i];
+        for(int i=0; i<tempContactArray.length; i++){
+			tempContactArray[i] = customerList.tempArray()[i];
    
         }
-        for(int j=1; j<contactArray.length; j++){
-            for(int i=0; i<contactArray.length-j; i++){
+        for(int j=1; j<tempContactArray.length; j++){
+            for(int i=0; i<tempContactArray.length-j; i++){
                 if(tempContactArray[i].getName().compareTo(tempContactArray[i+1].getName())>0){
                     Customer tempContact = tempContactArray[i];
                     tempContactArray[i] = tempContactArray[i+1];
@@ -625,22 +701,22 @@ class example{
             }
         }
 
-        for(int i=0; i<contactArray.length; i++) {
+        for(int i=0; i<tempContactArray.length; i++) {
             System.out.printf("| %-13s| %-13s| %-16s| %-15s| %-13.2f| %-18s|\n",tempContactArray[i].getId(),tempContactArray[i].getName(),tempContactArray[i].getPhoneNumber(),tempContactArray[i].getCompanyName(),tempContactArray[i].getSalary(),tempContactArray[i].getBirthday());
         }
 
     }
     //-------------------------SALARY SORT---------------------------
     public static void sortingBySalary(){
-		Customer[] tempContactArray = new Customer[contactArray.length];
+		Customer[] tempContactArray = new Customer[customerList.getSize()];
    
 
-        for(int i=0; i<contactArray.length; i++){
-			tempContactArray[i] = contactArray[i];
+        for(int i=0; i<tempContactArray.length; i++){
+			tempContactArray[i] = customerList.tempArray()[i];
    
         }
-        for(int j=1; j<contactArray.length; j++){
-            for(int i=0; i<contactArray.length-j; i++){
+        for(int j=1; j<tempContactArray.length; j++){
+            for(int i=0; i<tempContactArray.length-j; i++){
                 if(tempContactArray[i].getSalary()>tempContactArray[i+1].getSalary()){
 					Customer tempContact = tempContactArray[i];
 					tempContactArray[i] = tempContactArray[i+1];
@@ -651,7 +727,7 @@ class example{
             }
         }
 
-        for(int i=0; i<contactArray.length; i++) {
+        for(int i=0; i<tempContactArray.length; i++) {
             System.out.printf("| %-13s| %-13s| %-16s| %-15s| %-13.2f| %-18s|\n",tempContactArray[i].getId(),tempContactArray[i].getName(),tempContactArray[i].getPhoneNumber(),tempContactArray[i].getCompanyName(),tempContactArray[i].getSalary(),tempContactArray[i].getBirthday());
         }
 
@@ -659,15 +735,15 @@ class example{
 
     //-------------------------BIRTHDAY SORT---------------------------
     public static void sortingByBirthday(){
-		Customer[] tempContactArray = new Customer[contactArray.length];
+		Customer[] tempContactArray = new Customer[customerList.getSize()];
 
 
-        for(int i=0; i<contactArray.length; i++){
-			tempContactArray[i] = contactArray[i];
+        for(int i=0; i<tempContactArray.length; i++){
+			tempContactArray[i] = customerList.tempArray()[i];
  
         }
-        for(int j=1; j<contactArray.length; j++){
-            for(int i=0; i<contactArray.length-j; i++){
+        for(int j=1; j<tempContactArray.length; j++){
+            for(int i=0; i<tempContactArray.length-j; i++){
                 if((tempContactArray[i].getBirthday()).compareTo(tempContactArray[i+1].getBirthday())>0){
 					Customer tempContact = tempContactArray[i];
 					tempContactArray[i] = tempContactArray[i+1];
@@ -678,7 +754,7 @@ class example{
             }
         }
 
-        for(int i=0; i<contactArray.length; i++) {
+        for(int i=0; i<tempContactArray.length; i++) {
             System.out.printf("| %-13s| %-13s| %-16s| %-15s| %-13.2f| %-18s|\n",tempContactArray[i].getId(),tempContactArray[i].getName(),tempContactArray[i].getPhoneNumber(),tempContactArray[i].getCompanyName(),tempContactArray[i].getSalary(),tempContactArray[i].getBirthday());
         }
 
